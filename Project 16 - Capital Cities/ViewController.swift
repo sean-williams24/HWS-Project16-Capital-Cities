@@ -24,8 +24,24 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let washington = Capital(title: "Washington DC", coordinate: CLLocationCoordinate2D(latitude: 38.895111, longitude: -77.036667), info: "Named after George himself.")
         
         mapView.addAnnotations([london, oslo, paris, rome, washington])
-
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(changeMap))
     }
+    
+    @objc func changeMap() {
+        let ac = UIAlertController(title: "Map Type", message: nil, preferredStyle: .actionSheet)
+        ac.addAction(UIAlertAction(title: "Satellite", style: .default, handler: { (action) in self.mapView.mapType = .satellite }))
+        ac.addAction(UIAlertAction(title: "Hybrid", style: .default, handler: { (action) in self.mapView.mapType = .hybrid }))
+        ac.addAction(UIAlertAction(title: "Hybrid Flyover", style: .default, handler: { (action) in self.mapView.mapType = .hybridFlyover }))
+        ac.addAction(UIAlertAction(title: "Muted", style: .default, handler: { (action) in self.mapView.mapType = .mutedStandard }))
+        ac.addAction(UIAlertAction(title: "Satellite Flyover", style: .default, handler: { (action) in self.mapView.mapType = .satelliteFlyover }))
+        ac.addAction(UIAlertAction(title: "Standard", style: .default, handler: { (action) in self.mapView.mapType = .standard }))
+
+        present(ac, animated:  true)
+        
+    }
+    
+    
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         //If the annotation isn't from a capital city, it must return nil so iOS uses a default view.
@@ -34,14 +50,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let identifier = "Capital"
         
         //Try to dequeue an annotation view from the map view's pool of unused views.
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView
         
         if annotationView == nil {
             
             //If it isn't able to find a reusable view, create a new one using MKPinAnnotationView and sets its canShowCallout property to true. This triggers the popup with the city name.
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             annotationView?.canShowCallout = true
-            
+            annotationView?.pinTintColor = .black
             //Create a new UIButton using the built-in .detailDisclosure type. This is a small blue "i" symbol with a circle around it.
             let btn = UIButton(type: .detailDisclosure)
             annotationView?.rightCalloutAccessoryView = btn
