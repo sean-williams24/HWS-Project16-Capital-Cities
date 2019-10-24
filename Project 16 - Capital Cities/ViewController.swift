@@ -51,6 +51,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
         return annotationView
     }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        guard let annotation = view.annotation as? Capital else { return }
+        
+        let ac = UIAlertController(title: annotation.title, message: annotation.info, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+    }
 
 
 }
