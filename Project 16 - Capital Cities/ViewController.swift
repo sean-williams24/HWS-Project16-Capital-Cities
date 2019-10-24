@@ -12,7 +12,8 @@ import MapKit
 class ViewController: UIViewController, MKMapViewDelegate {
     
     @IBOutlet var mapView: MKMapView!
-    
+
+    var capitalCity: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,11 +72,19 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         guard let annotation = view.annotation as? Capital else { return }
         
+        capitalCity = annotation.title
+        
         let ac = UIAlertController(title: annotation.title, message: annotation.info, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
+        ac.addAction(UIAlertAction(title: "More Info", style: .default, handler: { (action) in
+            self.performSegue(withIdentifier: "WebView", sender: self)
+        }))
         present(ac, animated: true)
     }
 
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! WebViewController
+        vc.capitalCity = capitalCity
+    }
 }
 
